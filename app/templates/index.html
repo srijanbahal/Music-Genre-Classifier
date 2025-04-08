@@ -1,8 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Genre Classifier</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E293B',
+                        secondary: '#9333EA',
+                        accent: '#FACC15',
+                        vibrant: '#14B8A6',
+                    },
+                },
+            },
+        };
+    </script>
 </head>
-<body>
+<body class="bg-gradient-to-br from-primary via-secondary to-vibrant min-h-screen flex items-center justify-center">
+    <div class="bg-white shadow-2xl rounded-lg p-8 max-w-lg w-full transform transition duration-500 hover:scale-105">
+        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-6 animate-pulse">🎵 Music Genre Classifier</h1>
+        <p class="text-center text-gray-600 mb-6">
+            Upload a <span class="font-semibold text-gray-800">.wav</span> file to predict its genre.
+        </p>
+        <form id="uploadForm" action="/predict" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <!-- File Upload -->
+            <div>
+                <label for="audioFile" class="block text-sm font-medium text-gray-700">Upload Audio File</label>
+                <input type="file" id="audioFile" name="audioFile" accept=".wav" required
+                    class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent sm:text-sm">
+            </div>
+            <!-- Submit Button -->
+            <div>
+                <button type="submit"
+                    class="w-full bg-accent text-primary py-3 px-4 rounded-lg text-lg font-semibold hover:bg-yellow-400 focus:outline-none focus:ring-4 focus:ring-yellow-300 focus:ring-offset-2">
+                    Predict Genre
+                </button>
+            </div>
+        </form>
+        <!-- Prediction Result -->
+        <div id="result" class="mt-8 hidden">
+            <h2 class="text-xl font-semibold text-gray-800">Prediction Result:</h2>
+            <p id="prediction" class="text-gray-600 mt-2"></p>
+            <audio id="audioPlayer" controls class="mt-4 w-full hidden"></audio>
+        </div>
+    </div>
+
+    <script>
+        // Handle form submission and display results dynamically
+        const form = document.getElementById('uploadForm');
+        const resultDiv = document.getElementById('result');
+        const predictionText = document.getElementById('prediction');
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const response = await fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                predictionText.textContent = `🎶 Genre: ${data.genre}`;
+                audioPlayer.src = data.audioUrl; // URL to the uploaded audio file
+                audioPlayer.classList.remove('hidden');
+                resultDiv.classList.remove('hidden');
+            } else {
+                alert('Error processing the file. Please try again.');
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,19 @@
+# Web framework
+flask
+
+# Machine Learning and Deep Learning
+tensorflow
+scikit-learn
+xgboost
+
+# Audio processing
+librosa
+
+# Data manipulation and visualization
+numpy
+pandas
+matplotlib
+seaborn
+
+# File handling and utilities
+kaggle
